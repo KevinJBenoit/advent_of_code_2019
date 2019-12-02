@@ -3,12 +3,9 @@ from puzzle_input import intcode
 
 def compute_opcodes(codes, program):
     """
-
+    performs the math operations on the program
     """
     position_0 = codes[0]
-    # position_1 = codes[1]
-    # position_2 = codes[2]
-    # position_3 = codes[3]
 
     if position_0 == 99:
         return False
@@ -44,22 +41,42 @@ def multiply_opcode(codes, program):
 
     program[position_3] = program[position_1] * program[position_2]
 
-
-def main():
+def program_output(intcode_in, noun, verb):
     """
-    main
+    produces the output of the program with the given noun and verb
     """
-    list_intcode = list(intcode)
-
-
+    list_intcode = list(intcode_in)
     flag = True
     i = 0
+    list_intcode[1] = noun
+    list_intcode[2] = verb
     #slice through the program 4 codes at a time
     while flag:
         flag = flag = compute_opcodes(list_intcode[0+i:4+i], list_intcode)
         i += 4
 
-    print(list_intcode)
+    return list_intcode[0]
+
+def main():
+    """
+    main
+    """
+    flag = False
+    noun, verb = 0, 0
+
+    while not flag:
+        output = program_output(intcode, noun, verb)
+
+        if output == 19690720:
+            flag = True
+        elif 19690720 - output < 99:
+            verb = 19690720 - output
+            flag = True
+        else:
+            noun += 1
+
+    print(f"Output: {output}, noun: {noun}, verb:{verb}")
+    print(f"Answer: {100 * noun + verb}")
 
 
 if __name__ == "__main__":
