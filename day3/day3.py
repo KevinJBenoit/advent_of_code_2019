@@ -80,6 +80,8 @@ def main():
 
     intersections = find_intersections(path1, path2)
 
+    print(path1)
+    print(path2)
     print(intersections)
 
 if __name__ == "__main__":
