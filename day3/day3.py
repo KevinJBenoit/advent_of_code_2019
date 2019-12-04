@@ -1,12 +1,13 @@
 import csv
 import os
+from matplotlib import collections as mc
+import matplotlib.pyplot as plt
 
-
-def organize_csv(file, directory):
+def organize_csv(file):
     """
     read in the csv file and organize the rows into dictionary variables
     """
-    os.chdir(directory)
+    os.chdir(r'C:\Users\Kevin Benoit\OneDrive\Code\AdventOfCode2019\day3')
 
     #create containers for both rows
     tuples1 = []
@@ -33,7 +34,7 @@ def translate_traversal(wire_in):
     translate the traversal of the wire into x, y coordinate system
     """
     cursor = [0, 0]
-    path = []
+    path = [[0, 0]]
     for direction in wire_in:
         #moves up, adds to y
         if direction[0] == 'U':
@@ -55,7 +56,15 @@ def translate_traversal(wire_in):
             cursor[0] += direction[1]
             path.append(cursor.copy())
 
-    return path
+    #translate the endpoints into lines
+    lines = []
+    for index in range(len(path)):
+        if index == len(path)-1:
+            break
+        else:
+            lines.append([path[index], path[index+1]])
+
+    return lines
 
 def find_intersections(traversal1, traversal2):
     """
@@ -63,9 +72,6 @@ def find_intersections(traversal1, traversal2):
     """
     intersections = []
 
-    for coordinates in traversal1:
-        if coordinates in traversal2:
-            intersections.append(coordinates)
 
     return intersections
 
@@ -73,16 +79,25 @@ def find_intersections(traversal1, traversal2):
 def main():
     #change the working directory to the day3 folder
 
-    wire1, wire2 = organize_csv('wire_input.txt', './day3')
+    wire1, wire2 = organize_csv('wire_input.txt')
 
     path1 = translate_traversal(wire1)
     path2 = translate_traversal(wire2)
 
-    intersections = find_intersections(path1, path2)
+    # intersections = find_intersections(path1, path2)
 
-    print(path1)
-    print(path2)
-    print(intersections)
+
+    lines1 = mc.LineCollection(path1, colors='r', linewidths=1)
+    lines2 = mc.LineCollection(path2, colors='g', linewidths=1)
+    fig = plt.figure()
+
+    ax1 = fig.add_subplot(1, 1, 1)
+    ax1.add_collection(lines1)
+    ax1.add_collection(lines2)
+    ax1.autoscale()
+    ax1.set_title('Current')
+
+    plt.show()
 
 if __name__ == "__main__":
     main()
