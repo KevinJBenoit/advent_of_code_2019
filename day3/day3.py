@@ -2,6 +2,9 @@ import csv
 import os
 from matplotlib import collections as mc
 import matplotlib.pyplot as plt
+import numpy as np
+
+
 
 def organize_csv(file):
     """
@@ -66,38 +69,36 @@ def translate_traversal(wire_in):
 
     return lines
 
+
+def find_direction(line):
+    if line[0][0] == line[1][0]:
+        return 'vertical'
+    else:
+        return 'horizontal'
+
 def find_intersections(traversal1, traversal2):
     """
     returns a list of x,y coordinates where there is overlap between the two wires
     """
     intersections = []
 
-
     return intersections
+
+def path_coordinates(line):
+    direction = find_direction(line)
+    print(direction)
 
 
 def main():
-    #change the working directory to the day3 folder
 
     wire1, wire2 = organize_csv('wire_input.txt')
 
     path1 = translate_traversal(wire1)
     path2 = translate_traversal(wire2)
 
-    # intersections = find_intersections(path1, path2)
+    print(path1)
 
 
-    lines1 = mc.LineCollection(path1, colors='r', linewidths=1)
-    lines2 = mc.LineCollection(path2, colors='g', linewidths=1)
-    fig = plt.figure()
-
-    ax1 = fig.add_subplot(1, 1, 1)
-    ax1.add_collection(lines1)
-    ax1.add_collection(lines2)
-    ax1.autoscale()
-    ax1.set_title('Current')
-
-    plt.show()
 
 if __name__ == "__main__":
     main()
