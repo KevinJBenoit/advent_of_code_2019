@@ -45,21 +45,29 @@ def create_objects(array):
     #slice string on eithe side of the ')'
     for index, pair in enumerate(array):
         parens_index = pair.index(')')
+        #append the first pair as they are guaranteed unique
         if index == 0:
             orbitee = Object(pair[:parens_index])
             orbiter = Object(pair[parens_index+1:])
 
-            orbiter.direct_orbit = orbitee
-
             objects.append(orbitee)
             objects.append(orbiter)
+
+        #check for unique pairs
         else:
+            #find the existing object in the list or the direct orbit and
+            #establish the linked list
             orbitee = Object(pair[:parens_index])
             orbiter = Object(pair[parens_index+1:])
 
-            orbiter.direct_orbit = orbitee
+            #loop through the existing objects
+            for thing in objects:
+                if thing.name != orbitee.name:
+                    objects.append(orbitee)
 
-            objects.append(orbiter)
+                if thing.name != orbiter.name:
+                    objects.append(orbiter)
+
 
 
     return objects
@@ -69,12 +77,13 @@ def main():
     list_objects = create_objects(output)
 
     print(list_objects)
+
     # total_orbits = 0
     # for item in list_objects:
     #     cursor = item.get_direct_orbits()
     #     while cursor:
     #         total_orbits += 1
-    #         cursor = cursor.direct_orbit #direct orbits OF direct orbits are None!
+    #         cursor = cursor.direct_orbit
 
 
     # print(total_orbits)
