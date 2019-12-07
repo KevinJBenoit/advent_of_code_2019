@@ -98,24 +98,54 @@ def create_graph(objects_array, orbits_array):
 
         #pop the pair to shorten the list for the larger input?
 
+def find_orbital_path(orbits, object_name):
+    orbit_path = []
+    for mass in orbits:
+        if mass.name == object_name:
+            total_orbits = 0
+            cursor = mass.get_direct_orbits()
+            while cursor:
+                total_orbits += 1
+                orbit_path.append(cursor)
+                cursor = cursor.direct_orbit
 
+    return orbit_path
 
 def main():
+    """
+    main
+    """
     output = read_input()
     list_objects = create_objects(output)
 
     create_graph(list_objects, output)
 
-
-
+    ###############
+    #part 1
+    ###############
     total_orbits = 0
     for item in list_objects:
         cursor = item.get_direct_orbits()
         while cursor:
             total_orbits += 1
             cursor = cursor.direct_orbit
-
     print(total_orbits)
+
+    ###############
+    #part2
+    ###############
+    #find the path of santa to com and count
+    you_path = find_orbital_path(list_objects, 'YOU')
+    #find the path of you to com and count
+    santa_path = find_orbital_path(list_objects, 'SAN')
+
+    overlap = []
+    #find the point where you both connect on the main orbit tree
+    for mass in you_path:
+        if mass in santa_path:
+            overlap.append(you_path.index(mass) + santa_path.index(mass))
+
+    print(min(overlap))
 
 if __name__ == "__main__":
     main()
