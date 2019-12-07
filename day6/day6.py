@@ -42,6 +42,7 @@ def create_objects(array):
     returns array of objects
     """
     objects = []
+    name_objects = []
     #slice string on eithe side of the ')'
     for index, pair in enumerate(array):
         parens_index = pair.index(')')
@@ -53,6 +54,8 @@ def create_objects(array):
             objects.append(orbitee)
             objects.append(orbiter)
 
+            name_objects.append(orbitee.name)
+            name_objects.append(orbiter.name)
         #check for unique pairs
         else:
             #find the existing object in the list or the direct orbit and
@@ -60,33 +63,59 @@ def create_objects(array):
             orbitee = Object(pair[:parens_index])
             orbiter = Object(pair[parens_index+1:])
 
-            #loop through the existing objects
-            for thing in objects:
-                if thing.name != orbitee.name:
-                    objects.append(orbitee)
 
-                if thing.name != orbiter.name:
-                    objects.append(orbiter)
-
+            if orbitee.name not in name_objects:
+                objects.append(orbitee)
+                name_objects.append(orbitee.name)
+            if orbiter.name not in name_objects:
+                objects.append(orbiter)
+                name_objects.append(orbiter.name)
 
 
     return objects
+
+def create_graph(objects_array, orbits_array):
+    """
+    create the linked list by connecting each objects direct_orbit member
+    """
+    for index, pair in enumerate(orbits_array):
+        parens_index = pair.index(')')
+
+
+        orbitee = str(pair[:parens_index])
+        orbiter = str(pair[parens_index+1:])
+
+        for x in objects_array:
+            if x.name == orbitee:
+                object_orbitee = x
+                break
+        for x in objects_array:
+            if x.name == orbiter:
+                object_orbiter = x
+                break
+
+        object_orbiter.direct_orbit = object_orbitee
+
+        #pop the pair to shorten the list for the larger input?
+
+
 
 def main():
     output = read_input()
     list_objects = create_objects(output)
 
-    print(list_objects)
-
-    # total_orbits = 0
-    # for item in list_objects:
-    #     cursor = item.get_direct_orbits()
-    #     while cursor:
-    #         total_orbits += 1
-    #         cursor = cursor.direct_orbit
+    create_graph(list_objects, output)
 
 
-    # print(total_orbits)
+
+    total_orbits = 0
+    for item in list_objects:
+        cursor = item.get_direct_orbits()
+        while cursor:
+            total_orbits += 1
+            cursor = cursor.direct_orbit
+
+    print(total_orbits)
 
 if __name__ == "__main__":
     main()
