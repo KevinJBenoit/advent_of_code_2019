@@ -2,7 +2,7 @@
 You've landed at the Universal Orbit Map facility on Mercury. Because navigation in space often involves transferring between orbits, the orbit maps here are useful for finding efficient routes between, for example, you and Santa. You download a map of the local orbits (your puzzle input).
 
 Except for the universal Center of Mass (COM), every object in space is in orbit around exactly one other object. An orbit looks roughly like this:
-
+```
                   \
                    \
                     |
@@ -12,7 +12,7 @@ AAA--> o            o <--BBB
                     |
                    /
                   /
-
+```
 
 In this diagram, the object BBB is in orbit around AAA. The path that BBB takes around AAA (drawn with lines) is only partly shown. In the map data, this orbital relationship is written AAA)BBB, which means "BBB is in orbit around AAA".
 
@@ -34,14 +34,14 @@ E)J
 J)K
 K)L
 Visually, the above map of orbits looks like this:
-
+```
 
         G - H       J - K - L
        /           /
 COM - B - C - D - E - F
                \
                 I
-
+```
 
 In this visual representation, when two objects are connected by a line, the one on the right directly orbits the one on the left.
 
@@ -79,7 +79,7 @@ K)L
 K)YOU
 I)SAN
 Visually, the above map of orbits looks like this:
-
+```
                           YOU
                          /
         G - H       J - K - L
@@ -87,6 +87,7 @@ Visually, the above map of orbits looks like this:
 COM - B - C - D - E - F
                \
                 I - SAN
+```
 In this example, YOU are in orbit around K, and SAN is in orbit around I. To move from K to I, a minimum of 4 orbital transfers are required:
 
 K to J
@@ -94,7 +95,7 @@ J to E
 E to D
 D to I
 Afterward, the map of orbits looks like this:
-
+```
         G - H       J - K - L
        /           /
 COM - B - C - D - E - F
@@ -102,4 +103,5 @@ COM - B - C - D - E - F
                 I - SAN
                  \
                   YOU
+```
 What is the minimum number of orbital transfers required to move from the object YOU are orbiting to the object SAN is orbiting? (Between the objects they are orbiting - not between YOU and SAN.)
