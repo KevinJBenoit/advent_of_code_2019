@@ -23,6 +23,9 @@ def compute_opcodes(codes, program):
     elif position_0 == 4:
         output_parameter(codes, program)
 
+    #added parameter mode
+    elif position_0 > 100 and position_0 < 9000:
+        return parameter_mode(position_0, codes, program)
     return True
 
 def add_opcode(codes, program):
@@ -76,17 +79,42 @@ def parameter_mode(parameters, codes, program):
     """
     #break down the parameters
     list_parameter = [int(digit) for digit in str(parameters)]
+    length_of_instruction = len(list_parameter)
+    #check if there is a 2nd parameter
+    if length_of_instruction == 3:
+        #DE
+        two_digit_opcode = list_parameter[1:]
+        #C
+        first_parameter = list_parameter[0]
+        #B
+        second_parameter = None
+        #A
+        third_parameter = None
 
-    #check if there is a 3rd parameter
-    if len(list_parameter) == 4:
+    #check if there is a 3nd parameter
+    elif length_of_instruction == 4:
         #DE
         two_digit_opcode = list_parameter[2:]
         #C
         first_parameter = list_parameter[1]
-        #D
+        #B
         second_parameter = list_parameter[0]
+        #A
+        third_parameter = None
+    elif length_of_instruction == 5:
+        #DE
+        two_digit_opcode = list_parameter[3:]
+        #C
+        first_parameter = list_parameter[2]
+        #B
+        second_parameter = list_parameter[1]
+        #A
+        third_parameter = list_parameter[0]
 
+    if two_digit_opcode == 99:
+        return False
 
+    return True
 def program_output(intcode_in):
     """
     produces the output of the program with the given noun and verb
