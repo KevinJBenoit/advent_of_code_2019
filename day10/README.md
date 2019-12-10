@@ -10,7 +10,7 @@ Your job is to figure out which asteroid would be the best place to build a new 
 For example, consider the following map:
 
 
-'''
+```
 .#..#
 .....
 #####
