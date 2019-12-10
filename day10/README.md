@@ -8,6 +8,7 @@ The map indicates whether each position is empty (.) or contains an asteroid (#)
 Your job is to figure out which asteroid would be the best place to build a new monitoring station. A monitoring station can detect any asteroid to which it has direct line of sight - that is, there cannot be another asteroid exactly between them. This line of sight can be at any angle, not just lines aligned to the grid or diagonally. The best location is the asteroid that can detect the largest number of other asteroids.
 
 For example, consider the following map:
+
 '''
 
 .#..#
