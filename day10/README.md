@@ -9,6 +9,7 @@ Your job is to figure out which asteroid would be the best place to build a new 
 
 For example, consider the following map:
 
+
 '''
 .#..#
 .....
@@ -16,6 +17,7 @@ For example, consider the following map:
 ....#
 ...##
 ```
+
 
 The best location for a new monitoring station on this map is the highlighted asteroid at 3,4 because it can detect 8 asteroids, more than any other location. (The only asteroid it cannot detect is the one at 1,0; its view of this asteroid is blocked by the asteroid at 2,2.) All other asteroids are worse locations; they can detect 7 or fewer other asteroids. Here is the number of other asteroids a monitoring station on each asteroid could detect:
 
@@ -41,6 +43,7 @@ Here is an asteroid (#) and some examples of the ways its line of sight might be
 ....f...c.
 ...e..d..c
 ```
+
 
 Here are some larger examples:
 
