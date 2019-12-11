@@ -72,6 +72,8 @@ def generate_Asteroids(data):
                 asteroids.append(Asteroid(index_x, index_y))
 
     return asteroids
+
+
 def main():
     """
     main
