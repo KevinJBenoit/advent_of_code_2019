@@ -9,7 +9,9 @@ class Asteroid:
         self.monitors = 0
 
         self.angles = []
-        self.result = []
+        self.results = []
+        self.pairs = []
+        self.lazer_queue = []
     def __str__(self):
         return f"{self.coordinates}, monitors {self.monitors}"
 
@@ -32,14 +34,44 @@ class Asteroid:
 
             #get the angle between each asteroid
             angle = math.atan2(rise, run) * 180 / math.pi
-
             self.angles.append(angle)
+
+            distance = math.sqrt((rise**2) + (run**2))
+
+            packet = (asteroid, distance, angle)
+            self.pairs.append(packet)
+
         #if there are multiple angles, there is a blocking line of site with all
         #but 1
         for data in self.angles:
-            if data not in self.result:
-                self.result.append(data)
+            if data not in self.results:
+                self.results.append(data)
                 self.monitors += 1
+
+
+
+    def lazer_targeting(self):
+        """
+        get the asteroids that are closest to the monitoring station based on
+        angles
+        """
+        #for every unique angle in the results
+        for angle in self.results:
+            common_angles = []
+
+            #check for all asteroids with that angle
+            for asteroid_data in self.pairs:
+                if asteroid_data[2] == angle:
+                    common_angles.append(asteroid_data)
+
+            #only target the asteroid that is closest
+            distance = 1000
+            best_index = 0
+            for index, asteroid in enumerate(common_angles):
+                if asteroid[1] < distance and asteroid[1] != 0:
+                    best_index = index
+                    distance = asteroid[1]
+            self.lazer_queue.append(common_angles[best_index])
 
 
 def load_data():
@@ -93,7 +125,19 @@ def main():
         if asteroid.monitors > best_station.monitors:
             best_station = asteroid
 
-    print(best_station)
+    best_station.lazer_targeting()
+    #sorts by the angle, low to high
+    best_station.lazer_queue.sort(key=lambda x:x[2])
+
+    #now splice so that -90 is the first point, everything before it goes "last"
+    new_queue = []
+    new_queue.append(best_station.lazer_queue[111:])
+    new_queue.append(best_station.lazer_queue[:111])
+
+    best_station.lazer_queue = new_queue[0] + new_queue[1]
+
+    #get the 200th asteroid
+    print(best_station.lazer_queue[199])
 
 if __name__ == "__main__":
     main()
