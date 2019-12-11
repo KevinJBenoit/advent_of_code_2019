@@ -5,58 +5,137 @@ def compute_opcodes(codes, program):
     """
     performs the math operations on the program
     """
-    position_0 = codes[0]
+    #there is a parameter mode
+    instructions = None
+    if codes[0] > 99:
+        #break down the parameters
+        list_parameter = [int(digit) for digit in str(codes[0])]
+        length_of_instruction = len(list_parameter)
+        #check if there is a 2nd parameter
+        if length_of_instruction == 3:
+            #DE
+            two_digit_opcode = list_parameter[1:]
+            #C
+            first_parameter = list_parameter[0]
+            #B
+            second_parameter = 0
+            #A
+            third_parameter = 0
+
+        #check if there is a 3nd parameter
+        elif length_of_instruction == 4:
+            #DE
+            two_digit_opcode = list_parameter[2:]
+            #C
+            first_parameter = list_parameter[1]
+            #B
+            second_parameter = list_parameter[0]
+            #A
+            third_parameter = 0
+        elif length_of_instruction == 5:
+            #DE
+            two_digit_opcode = list_parameter[3:]
+            #C
+            first_parameter = list_parameter[2]
+            #B
+            second_parameter = list_parameter[1]
+            #A
+            third_parameter = list_parameter[0]
+
+        instructions = [first_parameter, second_parameter, third_parameter]
+
+
+
+    if codes[0] > 99:
+        position_0 = two_digit_opcode[1]
+    else:
+        position_0 = codes[0]
+
 
     if position_0 == 99:
         return False
 
     if position_0 == 1:
-        add_opcode(codes, program)
+        if instructions:
+            add_opcode(codes, program, instructions)
+        else:
+            add_opcode(codes, program)
 
     elif position_0 == 2:
-        multiply_opcode(codes, program)
+        if instructions:
+            multiply_opcode(codes, program, instructions)
+        else:
+            multiply_opcode(codes, program)
 
     #if position 3 only use 2 codes
     elif position_0 == 3:
         take_input(codes, program)
 
     elif position_0 == 4:
-        output_parameter(codes, program)
+        print(output_parameter(codes, program))
 
-    #added parameter mode
-    elif position_0 > 100 and position_0 < 9000:
-        return parameter_mode(position_0, codes, program)
     return True
 
-def add_opcode(codes, program):
+def add_opcode(codes, program, instructions=None):
     """
     protocol if position 0 is a 1, adds elements found at positions 2 and 3
     indicators, their sum is stored at position 3 indicator
     """
-    position_1 = codes[1]
-    position_2 = codes[2]
-    position_3 = codes[3]
 
-    program[position_3] = program[position_1] + program[position_2]
+    position_1 = None
+    position_2 = None
+    position_3 = None
+    if instructions:
+        if instructions[0] == 1:
+            position_1 = codes[1]
+        else:
+            position_1 = program[codes[1]]
+        if instructions[1] == 1:
+            position_2 = codes[2]
+        else:
+            position_2 = program[codes[2]]
+        position_3 = program[codes[3]]
+    else:
+        position_1 = program[codes[1]]
+        position_2 = program[codes[2]]
+        position_3 = program[codes[3]]
+
+    program[codes[3]] = position_1 + position_2
 
 
-def multiply_opcode(codes, program):
+
+def multiply_opcode(codes, program, instructions=None):
     """
     protocol if position 0 is a 1, adds elements found at positions 2 and 3
     indicators, their product is stored at position 3 indicator
     """
-    position_1 = codes[1]
-    position_2 = codes[2]
-    position_3 = codes[3]
+    position_1 = None
+    position_2 = None
+    position_3 = None
+    if instructions:
+        if instructions[0] == 1:
+            position_1 = codes[1]
+        else:
+            position_1 = program[codes[1]]
+        if instructions[1] == 1:
+            position_2 = codes[2]
+        else:
+            position_2 = program[codes[2]]
 
-    program[position_3] = program[position_1] * program[position_2]
+        position_3 = codes[3]
+    else:
+        position_1 = program[codes[1]]
+        position_2 = program[codes[2]]
+        position_3 = program[codes[3]]
+
+    program[codes[3]] = position_1 * position_2
 
 def take_input(codes, program):
     """
     protocol if position 0 is a 3, will ask for an integer input value from user
     and store it at the address provided by position 1
     """
-    integer_input_value = input("Please provide an input: ")
+    integer_input_value = int(input("Please provide an input: "))
     position_1 = codes[1]
 
     program[position_1] = integer_input_value
@@ -114,6 +193,8 @@ def parameter_mode(parameters, codes, program):
     if two_digit_opcode == 99:
         return False
 
+
+
     return True
 def program_output(intcode_in):
     """
@@ -126,12 +207,13 @@ def program_output(intcode_in):
     #slice through the program 4 codes at a time
     #if position 0 is 3, slice 2 codes
     while flag:
-        if list_intcode[0+i] == 3:
-            compute_opcodes(list_intcode[0+i:2+i], list_intcode)
+        if list_intcode[0+i] == 3 or list_intcode[0+i] == 4:
+            flag = compute_opcodes(list_intcode[0+i:2+i], list_intcode)
+            i += 2
         #compute the next 4 codes
         else:
             flag = compute_opcodes(list_intcode[0+i:4+i], list_intcode)
-        i += 4
+            i += 4
 
     return list_intcode[0]
 
