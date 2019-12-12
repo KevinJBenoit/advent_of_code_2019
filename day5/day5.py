@@ -1,12 +1,13 @@
 from puzzle_input_day5 import intcode
 
 
-def compute_opcodes(codes, program):
+def compute_opcodes(codes, program, instruction_pointer):
     """
     performs the math operations on the program
     """
-    #there is a parameter mode
+
     instructions = None
+    #if there is a parameter mode
     if codes[0] > 99:
         #break down the parameters
         list_parameter = [int(digit) for digit in str(codes[0])]
@@ -45,7 +46,8 @@ def compute_opcodes(codes, program):
         instructions = [first_parameter, second_parameter, third_parameter]
 
 
-
+    #if there is an instruction, slice for the two digit opcode
+    #change if OPCODES go larger than 9
     if codes[0] > 99:
         position_0 = two_digit_opcode[1]
     else:
@@ -73,6 +75,18 @@ def compute_opcodes(codes, program):
 
     elif position_0 == 4:
         print(output_parameter(codes, program))
+
+    elif position_0 == 5:
+        jump_if_true(codes, program, instructions, instruction_pointer)
+
+    elif position_0 == 6:
+        jump_if_false(codes, program, instructions, instruction_pointer)
+
+    elif position_0 == 7:
+        less_than(codes, program, instructions)
+
+    elif position_0 == 8:
+        equals(codes, program, instructions)
 
     return True
 
@@ -103,7 +117,6 @@ def add_opcode(codes, program, instructions=None):
     program[codes[3]] = position_1 + position_2
 
 
-
 def multiply_opcode(codes, program, instructions=None):
     """
     protocol if position 0 is a 1, adds elements found at positions 2 and 3
@@ -130,6 +143,7 @@ def multiply_opcode(codes, program, instructions=None):
 
     program[codes[3]] = position_1 * position_2
 
+
 def take_input(codes, program):
     """
     protocol if position 0 is a 3, will ask for an integer input value from user
@@ -139,6 +153,7 @@ def take_input(codes, program):
     position_1 = codes[1]
 
     program[position_1] = integer_input_value
+
 
 def output_parameter(codes, program):
     """
@@ -151,51 +166,130 @@ def output_parameter(codes, program):
 
     return output
 
-
-def parameter_mode(parameters, codes, program):
+def jump_if_true(codes, program, instructions, instruction_pointer):
     """
-    takes the ABCDE paraemters and performs proper computations
+    if the first parameter is non-zero, it sets the instruction pointer to the
+    value from the second parameter. Otherwise, it does nothing.
     """
-    #break down the parameters
-    list_parameter = [int(digit) for digit in str(parameters)]
-    length_of_instruction = len(list_parameter)
-    #check if there is a 2nd parameter
-    if length_of_instruction == 3:
-        #DE
-        two_digit_opcode = list_parameter[1:]
-        #C
-        first_parameter = list_parameter[0]
-        #B
-        second_parameter = None
-        #A
-        third_parameter = None
 
-    #check if there is a 3nd parameter
-    elif length_of_instruction == 4:
-        #DE
-        two_digit_opcode = list_parameter[2:]
-        #C
-        first_parameter = list_parameter[1]
-        #B
-        second_parameter = list_parameter[0]
-        #A
-        third_parameter = None
-    elif length_of_instruction == 5:
-        #DE
-        two_digit_opcode = list_parameter[3:]
-        #C
-        first_parameter = list_parameter[2]
-        #B
-        second_parameter = list_parameter[1]
-        #A
-        third_parameter = list_parameter[0]
+    if instructions:
+        if instructions[0] == 1:
+            first_parameter = codes[1]
+        else:
+            first_parameter = program[codes[1]]
+        if instructions[1] == 1:
+            second_parameter = codes[2]
+        else:
+            second_parameter = program[codes[2]]
 
-    if two_digit_opcode == 99:
-        return False
+        third_parameter = codes[3]
+
+    else:
+        first_parameter = program[codes[1]]
+        second_parameter = program[codes[2]]
+        third_parameter = codes[3]
 
 
+    if first_parameter != 0:
+        instruction_pointer[0] = second_parameter
+    else:
+        instruction_pointer[0] += 3
 
-    return True
+def jump_if_false(codes, program, instructions, instruction_pointer):
+    """
+    if the first parameter is zero, it sets the instruction pointer to the value
+    from the second parameter. Otherwise, it does nothing.
+    """
+
+    if instructions:
+        if instructions[0] == 1:
+            first_parameter = codes[1]
+        else:
+            first_parameter = program[codes[1]]
+        if instructions[1] == 1:
+            second_parameter = codes[2]
+        else:
+            second_parameter = program[codes[2]]
+
+        third_parameter = codes[3]
+
+    else:
+        first_parameter = program[codes[1]]
+        second_parameter = program[codes[2]]
+        third_parameter = codes[3]
+
+    if first_parameter == 0:
+        instruction_pointer[0] = second_parameter
+    else:
+        instruction_pointer[0] += 3
+
+def less_than(codes, program, instructions):
+    """
+    if the first parameter is less than the second parameter, it stores 1 in the
+    position given by the third parameter. Otherwise, it stores 0.
+    """
+
+    if instructions:
+        if instructions[0] == 1:
+            first_parameter = codes[1]
+        else:
+            first_parameter = program[codes[1]]
+        if instructions[1] == 1:
+            second_parameter = codes[2]
+        else:
+            second_parameter = program[codes[2]]
+
+        third_parameter = codes[3]
+
+        if first_parameter < second_parameter:
+            program[third_parameter] = 1
+        else:
+            program[third_parameter] = 0
+
+    else:
+        first_parameter = program[codes[1]]
+        second_parameter = program[codes[2]]
+        third_parameter = codes[3]
+
+        if first_parameter < second_parameter:
+            program[third_parameter] = 1
+        else:
+            program[third_parameter] = 0
+
+
+def equals(codes, program, instructions):
+    """
+    if the first parameter is equal to the second parameter, it stores 1 in the
+    position given by the third parameter. Otherwise, it stores 0.
+    """
+
+    if instructions:
+        if instructions[0] == 1:
+            first_parameter = codes[1]
+        else:
+            first_parameter = program[codes[1]]
+        if instructions[1] == 1:
+            second_parameter = codes[2]
+        else:
+            second_parameter = program[codes[2]]
+
+        third_parameter = codes[3]
+
+        if first_parameter == second_parameter:
+            program[third_parameter] = 1
+        else:
+            program[third_parameter] = 0
+
+    else:
+        first_parameter = program[codes[1]]
+        second_parameter = program[codes[2]]
+        third_parameter = codes[3]
+
+        if first_parameter == second_parameter:
+            program[third_parameter] = 1
+        else:
+            program[third_parameter] = 0
+
 def program_output(intcode_in):
     """
     produces the output of the program with the given noun and verb
@@ -203,17 +297,37 @@ def program_output(intcode_in):
     list_intcode = list(intcode_in)
     flag = True
     i = 0
-
+    wrapper = [0,]
     #slice through the program 4 codes at a time
     #if position 0 is 3, slice 2 codes
     while flag:
-        if list_intcode[0+i] == 3 or list_intcode[0+i] == 4:
-            flag = compute_opcodes(list_intcode[0+i:2+i], list_intcode)
-            i += 2
+        i = wrapper[0]
+        opcode = list_intcode[0+i]
+        #handle paramemter mode
+        if opcode > 99:
+            list_opcode = [int(digit) for digit in str(opcode)]
+
+            #only get the opcode from the parameter mode
+            if len(list_opcode) == 3:
+                list_opcode = list_opcode[1:]
+            elif len(list_opcode) == 4:
+                list_opcode = list_opcode[2:]
+
+            final_list_opcode = [str(digit) for digit in list_opcode]
+            opcode = int("".join(final_list_opcode))
+
+
+        if opcode == 3 or opcode == 4:
+            flag = compute_opcodes(list_intcode[0+i:2+i], list_intcode, wrapper)
+            wrapper[0] += 2
+        #jump codes, i is moved according to them
+        elif opcode == 5 or opcode == 6:
+            #i is not being modified inside the function
+            flag = compute_opcodes(list_intcode[0+i:4+i], list_intcode, wrapper)
         #compute the next 4 codes
         else:
-            flag = compute_opcodes(list_intcode[0+i:4+i], list_intcode)
-            i += 4
+            flag = compute_opcodes(list_intcode[0+i:4+i], list_intcode, wrapper)
+            wrapper[0] += 4
 
     return list_intcode[0]
 
@@ -226,7 +340,7 @@ def main():
 
     output = program_output(intcode)
 
-    print(output)
+    # print(output)
 
 
 if __name__ == "__main__":
