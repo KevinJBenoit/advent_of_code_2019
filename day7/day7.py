@@ -1,7 +1,7 @@
 from puzzle_input_day7 import intcode
+import itertools
 
-
-def compute_opcodes(codes, program, instruction_pointer):
+def compute_opcodes(codes, program, instruction_pointer, input_values=None):
     """
     performs the math operations on the program
     """
@@ -71,10 +71,13 @@ def compute_opcodes(codes, program, instruction_pointer):
 
     #if position 3 only use 2 codes
     elif position_0 == 3:
-        take_input(codes, program)
+        if input_values:
+            take_input(codes, program, instruction_pointer, input_values)
+        else:
+            take_input(codes, program)
 
     elif position_0 == 4:
-        print(output_parameter(codes, program))
+        output_parameter(codes, program)
 
     elif position_0 == 5:
         jump_if_true(codes, program, instructions, instruction_pointer)
@@ -144,15 +147,26 @@ def multiply_opcode(codes, program, instructions=None):
     program[codes[3]] = position_1 * position_2
 
 
-def take_input(codes, program):
+def take_input(codes, program, instruction_pointer=None, input_instructions=None):
     """
     protocol if position 0 is a 3, will ask for an integer input value from user
     and store it at the address provided by position 1
     """
-    integer_input_value = int(input("Please provide an input: "))
-    position_1 = codes[1]
+    if input_instructions:
+        #if first input, then its the phase signal
+        if instruction_pointer[0] == 0:
+            integer_input_value = input_instructions[0]
+        #then its the second input instruction
+        else:
+            integer_input_value = input_instructions[1]
 
-    program[position_1] = integer_input_value
+        position_1 = codes[1]
+        program[position_1] = integer_input_value
+
+    else:
+        integer_input_value = int(input("Please provide an input: "))
+        position_1 = codes[1]
+        program[position_1] = integer_input_value
 
 
 def output_parameter(codes, program):
@@ -164,6 +178,7 @@ def output_parameter(codes, program):
 
     output = program[position_1]
 
+    program[0] = output
     return output
 
 def jump_if_true(codes, program, instructions, instruction_pointer):
@@ -290,10 +305,13 @@ def equals(codes, program, instructions):
         else:
             program[third_parameter] = 0
 
-def program_output(intcode_in):
+def program_output(intcode_in, phase_value, input_signal):
     """
     produces the output of the program with the given noun and verb
     """
+    #instructions for automating the amplifier inputs
+    input_instructions = [phase_value, input_signal]
+
     list_intcode = list(intcode_in)
     flag = True
     i = 0
@@ -318,7 +336,7 @@ def program_output(intcode_in):
 
 
         if opcode == 3 or opcode == 4:
-            flag = compute_opcodes(list_intcode[0+i:2+i], list_intcode, wrapper)
+            flag = compute_opcodes(list_intcode[0+i:2+i], list_intcode, wrapper, input_instructions)
             wrapper[0] += 2
         #jump codes, i is moved according to them
         elif opcode == 5 or opcode == 6:
@@ -331,16 +349,36 @@ def program_output(intcode_in):
 
     return list_intcode[0]
 
+def amplifier_control(phase_sequence, intcode_sequence):
+    """
+    runs the amplifier software using the given phase sequence
+    returns the thruster signal strength
+    """
+    input_signal = None
+    for index, phase in enumerate(phase_sequence):
+        if index == 0:
+            input_signal = 0
+            input_signal = program_output(intcode_sequence, phase, input_signal)
+        else:
+            input_signal = program_output(intcode_sequence, phase, input_signal)
 
+    thruster_signal = input_signal
+    return thruster_signal
 
 def main():
     """
     Copied over code from Day 2 for modification
     """
+    phase_setting_sequence = [0,1,2,3,4]
+    thruster_signals = []
+    permutations = list(itertools.permutations(phase_setting_sequence))
 
-    output = program_output(intcode)
+    for sequence in permutations:
+        thruster_signals.append(amplifier_control(sequence, intcode))
 
-    # print(output)
+    print(max(thruster_signals))
+
+
 
 
 if __name__ == "__main__":
