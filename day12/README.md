@@ -229,5 +229,6 @@ pot: 13 + 16 +  3 = 32;   kin: 3 + 11 + 5 = 19;   total: 32 * 19 = 608
 pot: 29 + 11 +  1 = 41;   kin: 3 +  7 + 4 = 14;   total: 41 * 14 = 574
 pot: 16 + 13 + 23 = 52;   kin: 7 +  1 + 1 =  9;   total: 52 *  9 = 468
 ```
+
 Sum of total energy: 290 + 608 + 574 + 468 = 1940
 What is the total energy in the system after simulating the moons given in your scan for 1000 steps?
