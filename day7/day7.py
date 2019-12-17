@@ -305,17 +305,16 @@ def equals(codes, program, instructions):
         else:
             program[third_parameter] = 0
 
-def program_output(intcode_in, phase_value, input_signal):
+def program_output(amp_intcode, phase_value, input_signal, amp_pointer, amp_number):
     """
     produces the output of the program with the given noun and verb
     """
     #instructions for automating the amplifier inputs
     input_instructions = [phase_value, input_signal]
-
-    list_intcode = list(intcode_in)
+    list_intcode = amp_intcode[amp_number]
     flag = True
     i = 0
-    wrapper = [0,]
+    wrapper = [amp_pointer[amp_number]]
     #slice through the program 4 codes at a time
     #if position 0 is 3, slice 2 codes
     while flag:
@@ -338,6 +337,10 @@ def program_output(intcode_in, phase_value, input_signal):
         if opcode == 3 or opcode == 4:
             flag = compute_opcodes(list_intcode[0+i:2+i], list_intcode, wrapper, input_instructions)
             wrapper[0] += 2
+            amp_pointer[amp_number] = wrapper[0]
+            if opcode == 4:
+                return list_intcode[0], True
+
         #jump codes, i is moved according to them
         elif opcode == 5 or opcode == 6:
             #i is not being modified inside the function
@@ -347,7 +350,7 @@ def program_output(intcode_in, phase_value, input_signal):
             flag = compute_opcodes(list_intcode[0+i:4+i], list_intcode, wrapper)
             wrapper[0] += 4
 
-    return list_intcode[0]
+    return list_intcode[0], False
 
 def amplifier_control(phase_sequence, intcode_sequence):
     """
@@ -355,12 +358,18 @@ def amplifier_control(phase_sequence, intcode_sequence):
     returns the thruster signal strength
     """
     input_signal = None
+    instruction_pointers = [0, 0, 0, 0, 0]
+    amp_intcodes = [intcode_sequence.copy(), intcode_sequence.copy(), intcode_sequence.copy(), intcode_sequence.copy(), intcode_sequence.copy()]
     for index, phase in enumerate(phase_sequence):
         if index == 0:
             input_signal = 0
-            input_signal = program_output(intcode_sequence, phase, input_signal)
+            input_signal, flag = program_output(amp_intcodes, phase, input_signal, instruction_pointers, index)
         else:
-            input_signal = program_output(intcode_sequence, phase, input_signal)
+            input_signal, flag = program_output(amp_intcodes, phase, input_signal, instruction_pointers, index)
+
+    while flag:
+        for index, phase in enumerate(phase_sequence):
+            input_signal, flag = program_output(amp_intcodes, phase, input_signal, instruction_pointers, index)
 
     thruster_signal = input_signal
     return thruster_signal
@@ -369,10 +378,14 @@ def main():
     """
     Copied over code from Day 2 for modification
     """
-    phase_setting_sequence = [0,1,2,3,4]
+    phase_setting_sequence = [9, 8, 7, 6, 5]
     thruster_signals = []
     permutations = list(itertools.permutations(phase_setting_sequence))
 
+    # make separate computers for each amp
+    # keep track of where each leaves off
+    # transfer ouput of one to input of another
+    # must pause of 4, done on 99
     for sequence in permutations:
         thruster_signals.append(amplifier_control(sequence, intcode))
 
