@@ -185,8 +185,10 @@ def multiply_opcode(codes, program_list, program_dict, instructions=None, relati
         position_1 = program_list[codes[1]]
         position_2 = program_list[codes[2]]
         position_3 = codes[3]
-
-    program_list[position_3] = position_1 * position_2
+    try:
+        program_list[position_3] = position_1 * position_2
+    except:
+        program_dict.update({position_3: position_1 * position_2})
 
 
 def take_input(codes, program_list, program_dict, relative_base=None, auto_input=None, instructions=None):
@@ -403,10 +405,7 @@ def program_output(list_intcode, dict_intcode, instruction_pointer, base_wrapper
     """
     produces the output of the program_list with the given noun and verb
     """
-    #instructions for automating the amplifier inputs
-    input_instructions = None
 
-    # dict_intcode = {intcode_in[0]}
     flag = True
     i = 0
     pointer_wrapper = [instruction_pointer[0]]
@@ -485,6 +484,9 @@ class Hull:
                         print('#', file=fileout, end=' ')
             print(file=fileout)
         print(file=fileout)
+
+    def robot_start(self):
+        self.matrix[self.robot.y][self.robot.x] = 1
 
 class Robot:
     def __init__(self, intcode_program, position):
@@ -581,7 +583,6 @@ def main():
     main
     """
     #quick and dirty way of extending memory
-
     for i in range(1000):
         intcode.append(0)
 
@@ -598,9 +599,7 @@ def main():
     #initialize robot and hull
     robot = Robot(intcode, starting_position)
     ship_hull = Hull(size, robot)
-
-    # ship_hull.print_hull()
-    # print(robot.take_picture(ship_hull))
+    ship_hull.robot_start()
 
     robot.run_robot(ship_hull)
 
