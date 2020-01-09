@@ -1,6 +1,6 @@
 from puzzle_input_day12 import *
 import itertools
-
+import copy
 
 def apply_gravity(moon_positions, moon_velocities):
     """
@@ -61,21 +61,29 @@ def main():
     moon_velocities = [io_velocity, europa_velocity, ganymede_velocity, callisto_velocity]
     steps = 0
 
-    for i in range(1000):
+    energy_history = [0,]
+    moon_position_history = [copy.deepcopy(moon_positions)]
+    moon_velocity_history = [copy.deepcopy(moon_velocities)]
 
-        # for i in range(4):
-        #     print(f"{moon_positions[i]} ----> {moon_velocities[i]}")
+    while True:
 
         apply_gravity(moon_positions, moon_velocities)
         apply_velocity(moon_positions, moon_velocities)
+
+
+        moon_position_history.append(copy.deepcopy(moon_positions[0]))
+
+
+        if moon_positions[0] in moon_position_history:
+            print(steps)
+        #the initial state will be the first repeated state
+        #find the cycles of each moon
+        #find LCM for all the moons
+
         steps += 1
 
-        # print(f"After {steps} steps:")
+    print(moon_positions)
 
-        # for i in range(4):
-        #     print(f"{moon_positions[i]} ----> {moon_velocities[i]}")
-
-    print(get_system_total_energy(moon_positions, moon_velocities))
 
 if __name__ == "__main__":
     main()
