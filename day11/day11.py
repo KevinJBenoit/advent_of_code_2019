@@ -127,8 +127,8 @@ def add_opcode(codes, program_list, program_dict, instructions=None, relative_ba
             position_2 = program_list[codes[2]]
 
         #find mode of position 3
-        # if instructions[2] == 1:
-        #     position_3 = codes[2]
+        if instructions[2] == 1:
+             print("add opcode position 3 should not be in immediate mode!")
         if instructions[2] == 2:
             position_3 = relative_base[0] + codes[3]
         else:
@@ -174,8 +174,8 @@ def multiply_opcode(codes, program_list, program_dict, instructions=None, relati
             position_2 = program_list[codes[2]]
 
         #find mode of position 3
-        # if instructions[2] == 1:
-        #     position_3 = codes[2]
+        if instructions[2] == 1:
+             print("multiply opcode position 3 should not be in immediate mode!")
         if instructions[2] == 2:
             position_3 = relative_base[0] + codes[3]
         else:
@@ -486,6 +486,9 @@ class Hull:
         print(file=fileout)
 
     def robot_start(self):
+        """
+        sets the initial position of the robot to a white space
+        """
         self.matrix[self.robot.y][self.robot.x] = 1
 
 class Robot:
@@ -586,13 +589,7 @@ def main():
     for i in range(1000):
         intcode.append(0)
 
-    #create movement function for robot on hull
-    # create camera for input - will provide 0 or 1 to intcode input
-    #gather outputs - will output twice, both 0 or 1, with paint color and direction to turn
-    #move robot forward 1 space
-    #program will halt when done painting, save the instruction_pointer and intcode to keep state
 
-    # print(program_output(intcode))
     size = 400
     starting_position = [size//2, size//2]
 
