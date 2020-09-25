@@ -59,8 +59,6 @@ def main():
     for chemical in reactions_list:
         chemical_list.append(create_recipe(chemical))
 
-    #JUST DO Stoichiometry!!!!!!!!!!!!!!!!!! REMEMBER CHEM CLASS??
-    #BALANCE LEFT AND RIGHT SIDES VIA THEIR REACTIONS!!!!!!!!!
 
     print("done")
 
